@@ -35,7 +35,7 @@ const requireLogin = async (req, res, next) => {
             });
         }
     }
-}
+};
 const requireRole = (roles) => async (req, res, next) => {
     const token = req.headers.authorization.split(' ')[1];
     var decodedToken = verifyToken(token);
@@ -54,8 +54,8 @@ const requireRole = (roles) => async (req, res, next) => {
             });
         }
     }
-}
+};
 module.exports = {
     requireLogin,
     requireRole
-}
+};

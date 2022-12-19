@@ -19,5 +19,5 @@ const errorHandle = (err, req, res, next) => {
 
 module.exports = {
     errorHandle,
-    tryCatch,
+    tryCatch
 };

@@ -4,7 +4,7 @@ const { tryCatch } = require('../middleware/errorHandler');
 const { requireLogin, requireRole } = require('../middleware/auth');
 
 route.post('/login',
-    authController.login
+    tryCatch(authController.login)
 );
 route.post('/sign-up',
     tryCatch(authController.signUp)

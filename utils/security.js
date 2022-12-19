@@ -52,4 +52,4 @@ module.exports = {
     generateRefreshToken,
     verifyPassword,
     verifyToken
-}
+};
