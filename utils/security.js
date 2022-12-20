@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 const CONFIG_STATUS = require('../config/status.json');
 const jwt = require('jsonwebtoken');
 
-const { JWT_SECRET_KEY, ACCESS_TOKEN_EXPIRE, REFRESH_TOKEN_EXPIRE } = process.env;
+const { JWT_SECRET_KEY_AT, JWT_SECRET_KEY_RT, TOKEN_EXPIRE_AT, TOKEN_EXPIRE_RT } = process.env;
 
 const SALT_ROUND = 10;
 
@@ -15,16 +15,16 @@ const encryptPassword = async (password) => {
 const generateAccessToken = ({ phone, role, _id, status }) => {
     const token = jwt.sign(
         { phone, role, _id, status },
-        JWT_SECRET_KEY,
-        { expiresIn: ACCESS_TOKEN_EXPIRE }
+        JWT_SECRET_KEY_AT,
+        { expiresIn: TOKEN_EXPIRE_AT }
     );
     return token;
 };
-const generateRefreshToken = ({ phone, role, status }) => {
+const generateRefreshToken = ({ phone, role, _id, status }) => {
     const token = jwt.sign(
         { phone, role, _id, status },
-        JWT_SECRET_KEY,
-        { expiresIn: REFRESH_TOKEN_EXPIRE }
+        JWT_SECRET_KEY_RT,
+        { expiresIn: TOKEN_EXPIRE_RT }
     );
     return token;
 };

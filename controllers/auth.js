@@ -1,43 +1,118 @@
 const authService = require('../services/auth');
 const dataValidation = require('../utils/dataValidation');
+const securityService = require('../utils/security');
+const CONFIG_STATUS = require('../config/status.json');
 
 const login = async (req, res) => {
     const { phone, password } = req.body;
 
+    //#region Data validation
     const isMissRequiredData = dataValidation.isArrayHasBlankOrNullElement([phone, password]);
     if (isMissRequiredData) {
-        res.send("missing required data");
+        res.send({
+            status: CONFIG_STATUS.FAIL,
+            message: 'Required data is missing'
+        });
         return;
     }
     
-    const isExistPhone = await authService.checkExistAccount(phone);
-    if (!isExistPhone) {
-        res.send("phone is not exist");
+    const checkPhoneNumberFormat = await dataValidation.isPhoneNumber(phone);
+    if (!checkPhoneNumberFormat) {
+        res.send({
+            status: CONFIG_STATUS.FAIL,
+            message: 'Invalid phone number format'
+        });
+        return;
+    }    
+    const checkPasswordFormat = await dataValidation.isPasswordFormat(phone);
+    if (!checkPasswordFormat) {
+        res.send({
+            status: CONFIG_STATUS.FAIL,
+            message: 'Invalid password format. Pass word must have min 8 character'
+        });
+        return;
+    }    
+    //#endregion
+
+    // Check if the account is exist
+    const isExist = await authService.checkExistAccount(phone);
+    if (!isExist) {
+        res.send({
+            status: CONFIG_STATUS.FAIL,
+            message: 'Account is not exist'
+        });
         return;
     }
 
+    // Verify password
     const verifyPassword = await authService.verifyPassword(phone, password);
     if (!verifyPassword) {
-        res.send("password is not right");
+        res.send({
+            status: CONFIG_STATUS.FAIL,
+            message: 'Incorrect password'
+        });
         return;
     }
 
-    // TODO: gen access_token and refresh_token
+    //#region Login successful
+    const accessToken = await authService.generateAccessToken(phone);
+    const refreshToken = await authService.generateRefreshToken(phone);
+    const accountInformation = await authService.getAccountInformation(phone);
+    //#endregion
 
-    res.send("Login successful");
+    res.send({
+        status: CONFIG_STATUS.SUCCESS,
+        message: 'Login successful',
+        data: {
+            access_token: accessToken,
+            refresh_token: refreshToken,
+            account_information: {
+                phone: accountInformation.phone,
+                name: accountInformation.name,
+                role: accountInformation.role,
+                avatar_url: accountInformation.avatar_url
+            }
+        }
+    });
 };
 const signUp = async (req, res) => {
-    const { name, phone, password } = req.body;
-    
-    const isMissRequiredData = dataValidation.isArrayHasBlankOrNullElement([name, phone, password]);
+    const { name, phone, password, email } = req.body;
+
+    //#region Data validation
+    const isMissRequiredData = dataValidation.isArrayHasBlankOrNullElement([name, phone, password, email]);
     if (isMissRequiredData) {
-        res.send("missing required data");
+        res.send({
+            status: CONFIG_STATUS.FAIL,
+            message: 'Required data is missing'
+        });
         return;
     }
+    const checkPhoneNumberFormat = await dataValidation.isPhoneNumber(phone);
+    if (!checkPhoneNumberFormat) {
+        res.send({
+            status: CONFIG_STATUS.FAIL,
+            message: 'Invalid phone number format'
+        });
+        return;
+    }
+    const checkEmailFormat = await dataValidation.isEmail(email);
+    if (!checkEmailFormat) {
+        res.send({
+            status: CONFIG_STATUS.FAIL,
+            message: 'Invalid email format'
+        });
+        return;
+    }
+    
+    //#endregion
 
-    const isExistPhone = await authService.checkExistAccount(phone);
-    if (isExistPhone) {
-        res.send("phone has already exist");
+    // Check if the account is exist
+    const isExist = await authService.checkExistAccount(phone, email);
+    if (isExist) {
+        res.send({
+            status: CONFIG_STATUS.FAIL,
+            message: 'Account is already exist'
+        });
         return;
     }
 

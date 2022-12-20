@@ -15,6 +15,20 @@ var User = new Schema({
         type: String,
         required: true
     },
+    email: {
+        type: String,
+        required: true
+    },
+    avatar_url: {
+        type: String,
+        required: true,
+        default: ''
+    },
+    status: {
+        type: Number,
+        required: true,
+        default: 1
+    },
     role: {
         type: String,
         required: true,

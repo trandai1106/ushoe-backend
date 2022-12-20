@@ -1,3 +1,5 @@
+const { REGEX } = require('../config/regex');
+
 const isVariableBlankOrNull = (data) => {
     if (data == undefined || data == null || data == '') {
         return true;
@@ -16,7 +18,20 @@ const isArrayHasBlankOrNullElement = (array) => {
     return false;   
 };
 
+const isPhoneNumber = (number) => {
+    return REGEX.PHONE_REGEX.test(number);
+}
+const isPasswordFormat = (string) => {
+    return REGEX.PASSWORD.test(string);
+}
+const isEmail = (string) => {
+    return REGEX.EMAIL_REGEX.test(string);
+}
+
 module.exports = {
     isVariableBlankOrNull,
-    isArrayHasBlankOrNullElement
+    isArrayHasBlankOrNullElement,
+    isPhoneNumber,
+    isPasswordFormat,
+    isEmail
 };
