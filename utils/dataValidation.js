@@ -1,4 +1,5 @@
 const { REGEX } = require('../config/regex');
+const ObjectId = require('mongoose').Types.ObjectId;
 
 const isVariableBlankOrNull = (data) => {
     if (data == undefined || data == null || data == '') {
@@ -27,11 +28,15 @@ const isPasswordFormat = (string) => {
 const isEmail = (string) => {
     return REGEX.EMAIL_REGEX.test(string);
 }
+const isMongooseObjectId = (string) => {
+    return ObjectId.isValid(string);
+}
 
 module.exports = {
     isVariableBlankOrNull,
     isArrayHasBlankOrNullElement,
     isPhoneNumber,
     isPasswordFormat,
-    isEmail
+    isEmail,
+    isMongooseObjectId
 };

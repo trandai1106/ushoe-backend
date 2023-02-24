@@ -16,13 +16,12 @@ var User = new Schema({
         required: true
     },
     email: {
-        type: String,
-        required: true
+        type: String
     },
     avatar_url: {
         type: String,
         required: true,
-        default: ''
+        default: '/avatars/default_avatar.png'
     },
     status: {
         type: Number,
@@ -34,13 +33,24 @@ var User = new Schema({
         required: true,
         enum: ["ADMIN", "SALE", "CUSTOMER"]
     },
-    address: {
-        type: String,
-        default: ""
+    province_id: {
+        type: mongoose.Types.ObjectId,
+        ref: 'Province'
+    },
+    district_id: {
+        type: mongoose.Types.ObjectId,
+        ref: 'District'
+    },
+    address_detail: {
+        type: String
     },
     created_at: {
         type: Date,
-        default: Date
+        default: Date.now()
+    },
+    secret_key_reset_password: {
+        type: String,
+        default: ''
     }
 });
 module.exports = mongoose.model('User', User);

@@ -7,15 +7,29 @@ route.post('/login',
     tryCatch(authController.login)
 );
 route.post('/sign-up',
-    tryCatch(authController.signUp)
+    tryCatch(authController.signUpCustomer)
 );
 route.post('/refresh-token',
-    requireLogin,
     tryCatch(authController.refreshToken)
 );
 route.post('/change-password',
     requireLogin,
     tryCatch(authController.changePassword)
 );
+route.get('/profile',
+    requireLogin,
+    tryCatch(authController.getProfile)
+);
+route.put('/profile',
+    requireLogin,
+    tryCatch(authController.updateProfile)
+);
+route.post('/forgot-password',
+    tryCatch(authController.forgotPassword)
+);
+route.post('/reset-password',
+    tryCatch(authController.resetPassword)
+);
+
 
 module.exports = route;

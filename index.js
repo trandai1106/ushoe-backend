@@ -6,14 +6,21 @@ var multer = require('multer');
 var upload = multer();
 const mongoose = require('mongoose');
 
+const districtRouter = require('./routers/district');
+const provinceRouter = require('./routers/province');
 const authRouter = require('./routers/auth');
+const productRouter = require('./routers/product');
+const branchRouter = require('./routers/branch');
+const saleRouter = require('./routers/sale');
 
 mongoose.set('strictQuery', true);
 mongoose.connect(
     process.env.DB_URI,  
     null,
     (err) => {
-        if (err) console.log(err) 
+        if (err) {
+            console.log(err);
+        }
         else console.log("Mongodb is connected");
     }
 );
@@ -41,7 +48,12 @@ app.get('/test', (req, res) => {
     res.status(200).send('OK');
 });
 
+app.use('/province', provinceRouter);
+app.use('/district', districtRouter);
 app.use('/auth', authRouter);
+app.use('/product', productRouter);
+app.use('/branch', branchRouter);
+app.use('/sale', saleRouter);
 
 app.listen(PORT, () => {
     console.log('Server is running on port ' + PORT);

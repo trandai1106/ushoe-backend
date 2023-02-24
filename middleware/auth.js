@@ -1,17 +1,18 @@
 // const { errorHandle } = require('./errorHandle')
 const User = require('../models/user');
 const CONFIG_STATUS = require('../config/status.json');
-const { verifyToken } = require('../utils/security');
+const { verifyAccessToken } = require('../utils/security');
+const dataValidation = require('../utils/dataValidation');
 
 const requireLogin = async (req, res, next) => {
-    if (req.headers.authorization == undefined) {
+    if (dataValidation.isVariableBlankOrNull(req.headers.authorization)) {
         res.status(401).send({
             status: CONFIG_STATUS.TOKEN_EMPTY,
             message: 'Authorization is not exist.'
         });
     } else {
         const token = req.headers.authorization.split(' ')[1];
-        var decodedToken = verifyToken(token);
+        var decodedToken = verifyAccessToken(token);
 
         if (decodedToken.status == 403) {
             res.status(decodedToken.status);
@@ -20,6 +21,8 @@ const requireLogin = async (req, res, next) => {
         else if (decodedToken.status == 200) {
             const userExist = await User.exists({ phone: decodedToken.data.phone });
             if (userExist) {
+                const user = await User.findOne({ phone: decodedToken.data.phone });
+                req.user = user;
                 next();
             } else {
                 res.status(402).send({
@@ -38,7 +41,7 @@ const requireLogin = async (req, res, next) => {
 };
 const requireRole = (roles) => async (req, res, next) => {
     const token = req.headers.authorization.split(' ')[1];
-    var decodedToken = verifyToken(token);
+    var decodedToken = verifyAccessToken(token);
     if (decodedToken.data.role == null) {
         res.status(403).send({
             status: CONFIG_STATUS.TOKEN_ERROR,

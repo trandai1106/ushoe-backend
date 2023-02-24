@@ -34,14 +34,25 @@ const verifyPassword = async (password, hashedPassword) => {
     return result;
 };
 
-const verifyToken = (token) => {
+const verifyAccessToken = (token) => {
     try {
-        const data = jwt.verify(token, JWT_SECRET_KEY);
+        const data = jwt.verify(token, JWT_SECRET_KEY_AT);
         return { status: 200, data};
     } catch (error) {
         return {
             status: CONFIG_STATUS.TOKEN_EXPIRED,
-            message: `Token Expired AT ${error.expiredAt}`
+            message: `Access token expired at ${error.expiredAt}`
+        };
+    }
+};
+const verifyRefreshToken = (token) => {
+    try {
+        const data = jwt.verify(token, JWT_SECRET_KEY_RT);
+        return { status: 200, data};
+    } catch (error) {
+        return {
+            status: CONFIG_STATUS.TOKEN_EXPIRED,
+            message: `Refresh token expired at ${error.expiredAt}`
         };
     }
 };
@@ -51,5 +62,6 @@ module.exports = {
     generateAccessToken,
     generateRefreshToken,
     verifyPassword,
-    verifyToken
+    verifyAccessToken,
+    verifyRefreshToken
 };
