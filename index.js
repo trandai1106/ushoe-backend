@@ -10,6 +10,7 @@ const districtRouter = require('./routers/district');
 const provinceRouter = require('./routers/province');
 const authRouter = require('./routers/auth');
 const productRouter = require('./routers/product');
+const productGroupRouter = require('./routers/productGroup');
 const branchRouter = require('./routers/branch');
 const saleRouter = require('./routers/sale');
 
@@ -52,6 +53,7 @@ app.use('/province', provinceRouter);
 app.use('/district', districtRouter);
 app.use('/auth', authRouter);
 app.use('/product', productRouter);
+app.use('/product-group', productGroupRouter);
 app.use('/branch', branchRouter);
 app.use('/sale', saleRouter);
 

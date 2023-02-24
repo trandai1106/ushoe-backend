@@ -1,25 +1,29 @@
 const route = require('express').Router();
-const productController = require('../controllers/product');
+const productGroupController = require('../controllers/productGroup');
 const { tryCatch } = require('../middleware/errorHandler');
 const { requireLogin, requireRole } = require('../middleware/auth');
 
-route.get('/list/:group_id',
-    tryCatch(productController.getProductsByGroup)
+route.get('/list',
+    tryCatch(productGroupController.getProductGroupOnSaleList)
+);
+route.get('/detail/:id',
+    tryCatch(productGroupController.getProductGroupDetail)
 );
 route.post('/create',
     requireLogin,
     requireRole(["ADMIN"]),
-    tryCatch(productController.createProduct)
+    tryCatch(productGroupController.createProductGroup)
 );
+
 route.put('/detail/:id',
     requireLogin,
     requireRole(["ADMIN"]),
-    tryCatch(productController.updateProduct)
+    tryCatch(productGroupController.updateProductGroup)
 );
 route.delete('/detail/:id',
     requireLogin,
     requireRole(["ADMIN"]),
-    tryCatch(productController.deleteProduct)
+    tryCatch(productGroupController.deleteProductGroup)
 );
 
 module.exports = route;

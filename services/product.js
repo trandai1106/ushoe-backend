@@ -3,35 +3,11 @@ const Product = require('../models/product');
 const security = require('../utils/security');
 const dataValidation  = require('../utils/dataValidation');
 
-//#region check exist
-const checkProductGroupExist = async (productGroupId) => {
-    const isExist = await ProductGroup.exists({ _id: productGroupId });
-    return isExist;
-};
 const checkProductExist = async (productId) => {
     const isExist = await Product.exists({ _id: productId });
     return isExist;
 };
-//#endregion
 
-
-//#region Product Group
-const getAllProductGroup = async () => {
-    const productGroups = await ProductGroup.find();
-    return productGroups;
-};
-const getProductGroupsOnSale = async () => {
-    const productGroupsOnSale = await ProductGroup.find({ status: 1 });
-    return productGroupsOnSale;
-};
-const getProductGroupById = async (productGroupId) => {
-    const productGroup = await ProductGroup.findById(productGroupId);
-    return productGroup;
-};
-//#endregion
-
-
-//#region Product
 const getProductsInGroup = async (productGroupId) => {
     let productsInGroup = [];
 
@@ -51,16 +27,20 @@ const getProductById = async (product_id) => {
     const product = await Product.findById(product_id);
     return product;
 }
-//#endregion
-
+const createProduct = async (product_code, size, unit_sell_price, group_id) => {
+    await Product.create({product_code, size, unit_sell_price, group_id});
+}
+const updateProduct = async (id, product_code, size, unit_sell_price, group_id) => {
+    await Product.findByIdAndUpdate(id, {product_code, size, unit_sell_price, group_id});
+}
+const deleteProduct = async (id) => {
+    await Product.findByIdAndDelete(id);
+}
 module.exports = {
-    checkProductGroupExist,
     checkProductExist,
-
-    getAllProductGroup,
-    getProductGroupsOnSale,
-    getProductGroupById,
-
     getProductsInGroup,
-    getProductById
+    getProductById,
+    createProduct,
+    updateProduct,
+    deleteProduct
 };

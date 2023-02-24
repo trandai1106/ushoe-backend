@@ -38,7 +38,7 @@ const login = async (req, res) => {
     }
     
     const user = await authService.getAccountInformation(phone);
-    if (!user.status == 0) {
+    if (user.status == 0) {
         return res.send({
             status: CONFIG_STATUS.FAIL,
             message: 'Account is blocked. Please contact with admin'
