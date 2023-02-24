@@ -13,6 +13,10 @@ const productRouter = require('./routers/product');
 const productGroupRouter = require('./routers/productGroup');
 const branchRouter = require('./routers/branch');
 const saleRouter = require('./routers/sale');
+const eventRouter = require('./routers/event');
+const discountRouter = require('./routers/discount');
+const customerRouter = require('./routers/customer');
+
 
 mongoose.set('strictQuery', true);
 mongoose.connect(
@@ -56,6 +60,9 @@ app.use('/product', productRouter);
 app.use('/product-group', productGroupRouter);
 app.use('/branch', branchRouter);
 app.use('/sale', saleRouter);
+app.use('/event', eventRouter);
+app.use('/discount', discountRouter);
+app.use('/customer', customerRouter);
 
 app.listen(PORT, () => {
     console.log('Server is running on port ' + PORT);

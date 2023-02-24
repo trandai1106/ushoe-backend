@@ -1,24 +1,24 @@
-const saleService = require('../services/sale');
+const customerService = require('../services/customer');
 const authService = require('../services/auth');
 const branchService = require('../services/branch');
 const dataValidation = require('../utils/dataValidation');
 const CONFIG_STATUS = require('../config/status.json');
 
-const getAllSales = async (req, res) => {
-    const sales  = await saleService.getAllSale();
+const getAllCustomers = async (req, res) => {
+    const customers  = await customerService.getAllCustomer();
     
     return res.send({
         status: CONFIG_STATUS.SUCCESS,
-        message: 'Get all sales successful',
+        message: 'Get all customers successful',
         data: {
-            sales: sales
+            customers: customers
         }
     });
 };
-const getSaleByID = async (req, res) => {
-    const sale_id = req.params.id;
+const getCustomerByID = async (req, res) => {
+    const customer_id = req.params.id;
 
-    const isMongooseObjectId = dataValidation.isMongooseObjectId(sale_id);
+    const isMongooseObjectId = dataValidation.isMongooseObjectId(customer_id);
     if (!isMongooseObjectId) {
         return res.send({
             status: CONFIG_STATUS.FAIL,
@@ -26,28 +26,28 @@ const getSaleByID = async (req, res) => {
         });
     }
 
-    const isExist = await saleService.checkExist(sale_id);
+    const isExist = await customerService.checkExist(customer_id);
     if (!isExist) {
         return res.send({
             status: CONFIG_STATUS.FAIL,
-            message: 'Sale not found'
+            message: 'Customer not found'
         });
     }
     
-    const  sale  = await saleService.getSaleByID(sale_id);
+    const  customer  = await customerService.getCustomerByID(customer_id);
     return res.send({
         status: CONFIG_STATUS.SUCCESS,
-        message: 'Get sale detail successful',
+        message: 'Get customer detail successful',
         data: {
-            sale: sale
+            customer: customer
         }
     });
 };
-const createSale = async (req, res) => {
-    const { name, phone, password, email, branch_id } = req.body;
+const createCustomer = async (req, res) => {
+    const { name, phone, password, email } = req.body;
 
     //#region Data validation
-    const isMissRequiredData = dataValidation.isArrayHasBlankOrNullElement([name, phone, password, email, branch_id]);
+    const isMissRequiredData = dataValidation.isArrayHasBlankOrNullElement([name, phone, password, email]);
     if (isMissRequiredData) {
         return res.send({
             status: CONFIG_STATUS.FAIL,
@@ -55,22 +55,6 @@ const createSale = async (req, res) => {
         });
     }
 
-    const isMongooseObjectId = dataValidation.isMongooseObjectId(branch_id);
-    if (!isMongooseObjectId) {
-        return res.send({
-            status: CONFIG_STATUS.FAIL,
-            message: 'Invalid ID'
-        });
-    }
-
-    const isExist = await branchService.checkExist(branch_id);
-    if (!isExist) {
-        return res.send({
-            status: CONFIG_STATUS.FAIL,
-            message: 'Branch not found'
-        });
-    }
-    
     const checkPhoneNumberFormat = dataValidation.isPhoneNumber(phone);
     if (!checkPhoneNumberFormat) {
         return res.send({
@@ -105,18 +89,18 @@ const createSale = async (req, res) => {
     }
     //
     
-    await saleService.createSale(name, phone, password, email, branch_id);
+    await customerService.createCustomer(name, phone, password, email);
     return res.send({
         status: CONFIG_STATUS.SUCCESS,
-        message: 'Create sale successful'
+        message: 'Create customer successful'
     });
 };
-const updateSale = async (req, res) => {
-    const { name, phone, password, email, branch_id } = req.body;
-    const sale_id = req.params.id;
+const updateCustomer = async (req, res) => {
+    const { name, phone, password, email } = req.body;
+    const customer_id = req.params.id;
 
     //#region Data validation
-    const isMissRequiredData = dataValidation.isArrayHasBlankOrNullElement([name, phone, password, email, branch_id, sale_id]);
+    const isMissRequiredData = dataValidation.isArrayHasBlankOrNullElement([name, phone, password, email, customer_id]);
     if (isMissRequiredData) {
         return res.send({
             status: CONFIG_STATUS.FAIL,
@@ -124,28 +108,11 @@ const updateSale = async (req, res) => {
         });
     }
 
-    const isMongooseObjectId = dataValidation.isMongooseObjectId(branch_id)
-                                && dataValidation.isMongooseObjectId(sale_id);
-    if (!isMongooseObjectId) {
+    const isExistCustomer = await customerService.checkExist(customer_id);
+    if (!isExistCustomer) {
         return res.send({
             status: CONFIG_STATUS.FAIL,
-            message: 'Invalid ID'
-        });
-    }
-
-    const isExistBranch = await branchService.checkExist(branch_id);
-    if (!isExistBranch) {
-        return res.send({
-            status: CONFIG_STATUS.FAIL,
-            message: 'Branch not found'
-        });
-    }
-
-    const isExistSale = await saleService.checkExist(sale_id);
-    if (!isExistSale) {
-        return res.send({
-            status: CONFIG_STATUS.FAIL,
-            message: 'Sale not found'
+            message: 'Customer not found'
         });
     }
     
@@ -183,17 +150,17 @@ const updateSale = async (req, res) => {
     // }
     // //
     
-    await saleService.updateSale(sale_id, name, phone, password, email, branch_id);
+    await customerService.updateCustomer(customer_id, name, phone, password, email);
     return res.send({
         status: CONFIG_STATUS.SUCCESS,
-        message: 'Update sale successful'
+        message: 'Update customer successful'
     });
 };
-const deleteSale = async (req, res) => {
-    const sale_id = req.params.id;
+const deleteCustomer = async (req, res) => {
+    const customer_id = req.params.id;
 
     //#region Data validation
-    const isMissRequiredData = dataValidation.isVariableBlankOrNull(sale_id);
+    const isMissRequiredData = dataValidation.isVariableBlankOrNull(customer_id);
     if (isMissRequiredData) {
         return res.send({
             status: CONFIG_STATUS.FAIL,
@@ -201,7 +168,7 @@ const deleteSale = async (req, res) => {
         });
     }
 
-    const isMongooseObjectId = dataValidation.isMongooseObjectId(sale_id);
+    const isMongooseObjectId = dataValidation.isMongooseObjectId(customer_id);
     if (!isMongooseObjectId) {
         return res.send({
             status: CONFIG_STATUS.FAIL,
@@ -209,24 +176,24 @@ const deleteSale = async (req, res) => {
         });
     }
 
-    const isExistSale = await saleService.checkExist(sale_id);
-    if (!isExistSale) {
+    const isExistCustomer = await customerService.checkExist(customer_id);
+    if (!isExistCustomer) {
         return res.send({
             status: CONFIG_STATUS.FAIL,
-            message: 'Sale not found'
+            message: 'Customer not found'
         });
     }
-    await saleService.deleteSale(sale_id);
+    await customerService.deleteCustomer(customer_id);
     return res.send({
         status: CONFIG_STATUS.SUCCESS,
-        message: 'Delete sale successful'
+        message: 'Delete customer successful'
     });
 };
 
-const blockSale = async (req, res) => {
-    const sale_id = req.params.id;
+const blockCustomer = async (req, res) => {
+    const customer_id = req.params.id;
 
-    const isMissRequiredData = dataValidation.isVariableBlankOrNull(sale_id);
+    const isMissRequiredData = dataValidation.isVariableBlankOrNull(customer_id);
     if (isMissRequiredData) {
         return res.send({
             status: CONFIG_STATUS.FAIL,
@@ -234,7 +201,7 @@ const blockSale = async (req, res) => {
         });
     }
 
-    const isMongooseObjectId = dataValidation.isMongooseObjectId(sale_id);
+    const isMongooseObjectId = dataValidation.isMongooseObjectId(customer_id);
     if (!isMongooseObjectId) {
         return res.send({
             status: CONFIG_STATUS.FAIL,
@@ -242,24 +209,24 @@ const blockSale = async (req, res) => {
         });
     }
 
-    const isExist = await saleService.checkExist(sale_id);
+    const isExist = await customerService.checkExist(customer_id);
     if (!isExist) {
         return res.send({
             status: CONFIG_STATUS.FAIL,
-            message: 'Sale not found'
+            message: 'Customer not found'
         });
     }
 
-    await saleService.blockSale(sale_id);
+    await customerService.blockCustomer(customer_id);
     return res.send({
         status: CONFIG_STATUS.SUCCESS,
-        message: 'Block sale successful'
+        message: 'Block customer successful'
     });
 };
-const activeSale = async (req, res) => {
-    const sale_id = req.params.id;
+const activeCustomer = async (req, res) => {
+    const customer_id = req.params.id;
 
-    const isMissRequiredData = dataValidation.isVariableBlankOrNull(sale_id);
+    const isMissRequiredData = dataValidation.isVariableBlankOrNull(customer_id);
     if (isMissRequiredData) {
         return res.send({
             status: CONFIG_STATUS.FAIL,
@@ -267,7 +234,7 @@ const activeSale = async (req, res) => {
         });
     }
 
-    const isMongooseObjectId = dataValidation.isMongooseObjectId(sale_id);
+    const isMongooseObjectId = dataValidation.isMongooseObjectId(customer_id);
     if (!isMongooseObjectId) {
         return res.send({
             status: CONFIG_STATUS.FAIL,
@@ -275,26 +242,26 @@ const activeSale = async (req, res) => {
         });
     }
 
-    const isExist = await saleService.checkExist(sale_id);
+    const isExist = await customerService.checkExist(customer_id);
     if (!isExist) {
         return res.send({
             status: CONFIG_STATUS.FAIL,
-            message: 'Sale not found'
+            message: 'Customer not found'
         });
     }
 
-    await saleService.activeSale(sale_id);
+    await customerService.activeCustomer(customer_id);
     return res.send({
         status: CONFIG_STATUS.SUCCESS,
-        message: 'Active sale successful'
+        message: 'Active customer successful'
     });
 };
 module.exports = {
-    getAllSales,
-    getSaleByID,
-    createSale,
-    updateSale,
-    deleteSale,
-    blockSale,
-    activeSale
+    getAllCustomers,
+    getCustomerByID,
+    createCustomer,
+    updateCustomer,
+    deleteCustomer,
+    blockCustomer,
+    activeCustomer
 };

@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 
 var Schema = mongoose.Schema;
-var Product = new Schema({
+var Discount = new Schema({
     branches_id: {
         type: [String],
         required: true
@@ -36,4 +36,4 @@ var Product = new Schema({
     }
 });
 
-module.exports = mongoose.model('Product', Product);
+module.exports = mongoose.model('Discount', Discount);

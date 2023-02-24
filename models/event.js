@@ -1,13 +1,13 @@
 var mongoose = require('mongoose');
 
 var Schema = mongoose.Schema;
-var Product = new Schema({
+var Event = new Schema({
     name: {
         type: String,
         required: true
     },
     title: {
-        type: Number
+        type: String
     },
     description: {
         type: String
@@ -25,4 +25,4 @@ var Product = new Schema({
     }
 });
 
-module.exports = mongoose.model('Product', Product);
+module.exports = mongoose.model('Event', Event);

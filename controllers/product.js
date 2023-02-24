@@ -6,23 +6,37 @@ const CONFIG_STATUS = require('../config/status.json');
 
 const getProductsByGroup = async (req, res) => {
     const { group_id } = req.params;
-    let products = [];
-    const productGroupsOnSale = await productGroupService.get();
-    for (var i = 0; i < productGroupsOnSale.length; i++) {
-    // productGroupsOnSale.forEach(async productGroup => {
-        const products = await productService.getProductsInGroup(productGroupsOnSale[i]._id);
-        productGroupsInfo.push({
-            product_group_id: productGroupsOnSale[i]._id,
-            name: productGroupsOnSale[i].name,
-            status: productGroupsOnSale[i].status,
-            products: products
+    //#region Data validation
+    const isMissRequiredData = dataValidation.isVariableBlankOrNull(group_id);
+    if (isMissRequiredData) {
+        return res.send({
+            status: CONFIG_STATUS.FAIL,
+            message: 'Missing required data'
         });
     }
+    
+    const isMongooseObjectId = dataValidation.isMongooseObjectId(group_id);
+    if (!isMongooseObjectId) {
+        return res.send({
+            status: CONFIG_STATUS.FAIL,
+            message: 'Invalid ID'
+        });
+    }
+    
+    const isExistProductGroup = await productGroupService.checkProductGroupExist(group_id);
+    if (!isExistProductGroup) {
+        return res.send({
+            status: CONFIG_STATUS.FAIL,
+            message: 'Product group not found'
+        });
+    }
+    const productsInGroup = await productService.getProductsInGroup(group_id);
+
     return res.send({
         status: CONFIG_STATUS.SUCCESS,
-        message: 'Get product list successful',
+        message: 'Get products in group successful',
         data: {
-            product_groups: productGroupsInfo
+            products: productsInGroup
         }
     });
 };
@@ -36,6 +50,14 @@ const createProduct = async (req, res) => {
         return res.send({
             status: CONFIG_STATUS.FAIL,
             message: 'Missing required data'
+        });
+    }
+    
+    const isMongooseObjectId = dataValidation.isMongooseObjectId(group_id);
+    if (!isMongooseObjectId) {
+        return res.send({
+            status: CONFIG_STATUS.FAIL,
+            message: 'Invalid ID'
         });
     }
     
@@ -135,7 +157,7 @@ const deleteProduct = async (req, res) => {
 
     return res.send({
         status: CONFIG_STATUS.SUCCESS,
-        message: 'Update product successful'
+        message: 'Delete product successful'
     });
 }
 

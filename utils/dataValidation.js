@@ -19,6 +19,15 @@ const isArrayHasBlankOrNullElement = (array) => {
     return false;   
 };
 
+const isArrayAllBlankOrNullElement = (array) => {
+    for (var i = 0; i < array.length; i++) {
+        if (!isVariableBlankOrNull(array[i])) {
+            return false;
+        }
+    }
+    return true;   
+};
+
 const isPhoneNumber = (number) => {
     return REGEX.PHONE_REGEX.test(number);
 }
@@ -38,5 +47,6 @@ module.exports = {
     isPhoneNumber,
     isPasswordFormat,
     isEmail,
-    isMongooseObjectId
+    isMongooseObjectId,
+    isArrayAllBlankOrNullElement
 };
